@@ -3,13 +3,18 @@ const Header = props => {
 	return <h1>{course}</h1>;
 };
 
+const Part = props => {
+	const { part, exercises } = props.partObj;
+	return (
+		<p>
+			{part} {exercises}
+		</p>
+	);
+};
+
 const Content = props => {
 	const parts = props.parts;
-	return parts.map(partObj => (
-		<p key={partObj.id}>
-			{partObj.part} {partObj.exercises}
-		</p>
-	));
+	return parts.map(partObj => <Part key={partObj.id} partObj={partObj} />);
 };
 
 const Total = props => {
