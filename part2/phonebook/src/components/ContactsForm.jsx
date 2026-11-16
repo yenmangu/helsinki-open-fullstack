@@ -4,31 +4,16 @@ const ContactForm = ({
 	onNumberChange,
 	onSubmit
 }) => {
-	const handleNameChange = event => {
-		const name = event.target.value;
-		onNameChange(name);
-	};
-
-	const handleNumberChange = event => {
-		const number = event.target.value;
-		onNumberChange(number);
-	};
-
-	const handleSubmit = event => {
-		event.preventDefault();
-		onSubmit();
-	};
-
 	const { name, number } = newContact;
 	return (
-		<form onSubmit={handleSubmit}>
+		<form onSubmit={onSubmit}>
 			<div>
 				name:
-				<input type="text" value={name} onChange={handleNameChange} />
+				<input type="text" value={name} onChange={onNameChange} />
 			</div>
 			<div>
 				number:
-				<input type="tel" value={number} onChange={handleNumberChange} />
+				<input type="tel" value={number} onChange={onNumberChange} />
 			</div>
 			<div>
 				<button type="submit">Add</button>
