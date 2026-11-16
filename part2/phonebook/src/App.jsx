@@ -1,122 +1,78 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import Filter from './components/Filter.jsx';
+import ContactForm from './components/ContactsForm.jsx';
+import Contacts from './components/Contacts.jsx';
+const App = () => {
+	const [persons, setPersons] = useState([
+		{ name: 'Arto Hellas', number: '040-123456', id: 1 },
+		{ name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+		{ name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+		{ name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+	]);
+	const [newContact, setNewContact] = useState({
+		name: '',
+		number: ''
+	});
 
-function App() {
-  const [count, setCount] = useState(0)
+	const [searchValue, setSearchValue] = useState('');
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+	const addPerson = () => {
+		const contactObject = {
+			name: newContact.name,
+			number: newContact.number,
+			id: persons.length + 1
+		};
 
-      <div className="ticks"></div>
+		if (nameAlreadyExists(newContact.name)) {
+			alert(`${newContact.name} already in phonebook`);
+			return;
+		}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+		setPersons(previous => previous.concat(contactObject));
+		setNewContact({ name: '', number: '' });
+	};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+	const handleNameChange = name => {
+		setNewContact(previousContact => ({
+			...previousContact,
+			name
+		}));
+	};
 
-export default App
+	const handleNumberChange = number => {
+		setNewContact(previousContact => ({
+			...previousContact,
+			number
+		}));
+	};
+
+	const nameAlreadyExists = newName =>
+		persons.some(person => {
+			return person.name === newName;
+		});
+
+	const searchTerm = searchValue.toLowerCase().trim();
+
+	const filteredContacts = persons.filter(person => {
+		const nameMatches = person.name.toLowerCase().trim().includes(searchTerm);
+		const numberMatches = person.number.includes(searchTerm);
+		return nameMatches || numberMatches;
+	});
+
+	return (
+		<div>
+			<h1>Phonebook</h1>
+			<Filter searchValue={searchValue} onSearchChange={setSearchValue} />
+			<h2>Add New Contact</h2>
+			<ContactForm
+				newContact={newContact}
+				onNameChange={handleNameChange}
+				onNumberChange={handleNumberChange}
+				onSubmit={addPerson}
+			/>
+			<Contacts contacts={filteredContacts} />
+		</div>
+	);
+};
+
+export default App;
